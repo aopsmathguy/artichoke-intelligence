@@ -377,7 +377,7 @@ function createHeartsAndConstraints(msg) {
     }
     var hearts = []
     for (var i = 0; i < heartCnt; i++) {
-        var heart = makeHeart("", Math.random() * 0.4 + 0.3);
+        var heart = makeHeart("m", Math.random() * 0.4 + 0.3);
         heart.position.x = width * (i / heartCnt - 0.5);
         heart.position.y = height * (0.8 * (Math.random() - 0.5))
         hearts.push(heart)
@@ -465,7 +465,7 @@ function start() {
     })
     mouseThing.setCustomDisplayPlacement(function(ctx, placement) {
         var r = 0.5
-        var label = "M"
+        var label = "m"
         var displacementY = 0.31
         ctx.save();
         ctx.translate(placement.position.x, placement.position.y);
