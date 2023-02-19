@@ -190,7 +190,7 @@ function doText(txt) {
     }
     return { pts: out, length: position };
 }
-function makeHeart(label, r) {
+function makeHeart(r) {
     var displacementY = 0.31
     // var out = new f2.Body({
     //     mass: 1,
@@ -236,12 +236,12 @@ function makeHeart(label, r) {
         ctx.fill();
         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.fillStyle = redScale(r);
-        ctx.font = "1px Arial";
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(label, 0, 0.15)
+//         ctx.beginPath();
+//         ctx.fillStyle = redScale(r);
+//         ctx.font = "1px Arial";
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+//         ctx.fillText(label, 0, 0.15)
 
         ctx.restore();
     })
@@ -377,7 +377,7 @@ function createHeartsAndConstraints(msg) {
     }
     var hearts = []
     for (var i = 0; i < heartCnt; i++) {
-        var heart = makeHeart("m", Math.random() * 0.4 + 0.3);
+        var heart = makeHeart(Math.random() * 0.4 + 0.3);
         heart.position.x = width * (i / heartCnt - 0.5);
         heart.position.y = height * (0.8 * (Math.random() - 0.5))
         hearts.push(heart)
