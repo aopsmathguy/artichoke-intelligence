@@ -364,12 +364,13 @@ function createHeartsAndConstraints(msg) {
         points.push(getPointsFromText(words[i]));
     }
     points.push(getPointsFromEndSymbol());
-    points.forEach(a => a.sort((a, b) => {
-        var diff = a.x - b.x;
-        if (diff != 0) {
+    points.forEach(a => a.sort((c, d) => {
+        var diff = c.x - d.x;
+        if (Math.abs(diff) > 0.01) {
             return diff
-        } return a.y - b.y
-    }))
+        } 
+        return c.y*c.x - d.y*d.x
+    })) 
     var heartCnt = 0
     for (var i = 0; i < points.length; i++) {
         var pts = points[i];
