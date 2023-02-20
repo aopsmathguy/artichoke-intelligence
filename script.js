@@ -367,13 +367,15 @@ function createHeartsAndConstraints(msg) {
             points.push(getPointsFromText(w));
         }
     }
-    points.forEach(a => a.sort((c, d) => {
-        var diff = c.x - d.x;
-        if (Math.abs(diff) > 0.01) {
-            return diff
-        } 
-        return c.y*c.x - d.y*d.x
-    })) 
+    points.forEach(a => {
+        a.sort((c, d) => {
+            var diff = c.x - d.x;
+            if (Math.abs(diff) > 0.01) {
+                return diff
+            } 
+            return (c.y - d.y)*(Math.round((c.x + 0.2492138)/scl) % 2 == 0 ? 1 : -1);
+        })
+    }) 
     var heartCnt = 0
     for (var i = 0; i < points.length; i++) {
         var pts = points[i];
@@ -382,6 +384,7 @@ function createHeartsAndConstraints(msg) {
     var hearts = []
     for (var i = 0; i < heartCnt; i++) {
         var heart = makeHeart(Math.random() * 0.4 + 0.3);
+        // var heart = makeHeart((10 * i % heartCnt)/heartCnt);
         heart.position.x = width * (i / heartCnt - 0.5);
         heart.position.y = height * (0.8 * (Math.random() - 0.5))
         hearts.push(heart)
