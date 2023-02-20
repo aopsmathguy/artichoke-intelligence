@@ -2,7 +2,6 @@ function mobileControls() {
     var moved = false;
     document.body.addEventListener("touchstart", function(e) {
         e.preventDefault();
-
         moved = false;
         var touch = e.touches[0];
         var mouseEvent = new MouseEvent("mousedown", {
@@ -325,8 +324,8 @@ function getPointsFromText(txt) {
     }
     return out
 }
-function doEndSymbol() {
-    var txt = '     ▄▄▄▄▄               ▄▄▄▄     \n   ████████▄▄         ▄███████▄▄  \n  █████████████▄  ▄▄█████████████ \n █████████████████████████████████\n██████████████████████████████████\n██████████████████████████████████\n▀████████████████████████████████ \n ███████████████████████████████  \n  ▀███████████████████████████▀   \n    ▀████████████████████████     \n       ▀███████████████████▀      \n         ▀███████████████▀        \n           ████████████▀          \n             ████████▀            \n               ████▀              \n                 ▀                ';
+function doEndSymbol(symbolTxt) {
+    var txt = symbolTxt;
     var split = txt.split("\n");
     var width = split[0].length;
     var height = 2 * split.length;
@@ -346,9 +345,9 @@ function doEndSymbol() {
     }
     return { pts: points, width: width, height: height };
 }
-function getPointsFromEndSymbol() {
+function getPointsFromEndSymbol(symbolTxt) {
     var out = [];
-    var info = doEndSymbol()
+    var info = doEndSymbol(symbolTxt)
     var pts = info.pts;
     var width = info.width;
     var height = info.height;
@@ -361,9 +360,13 @@ function createHeartsAndConstraints(msg) {
     var words = msg;
     var points = [];
     for (var i = 0; i < words.length; i++) {
-        points.push(getPointsFromText(words[i]));
+        var w = words[i];
+        if (w.length > 0 && w.charAt(0) == "\\"){
+            points.push(getPointsFromEndSymbol(w.substring(1)));
+        } else{
+            points.push(getPointsFromText(w));
+        }
     }
-    points.push(getPointsFromEndSymbol());
     points.forEach(a => a.sort((c, d) => {
         var diff = c.x - d.x;
         if (Math.abs(diff) > 0.01) {
@@ -429,14 +432,28 @@ function loop(dt) {
     ctx.restore();
     requestAnimationFrame(loop.bind(this, dt));
 }
-function start() {
+function getUrl(lst){
+    var url = location.protocol + '//' + location.host + location.pathname + "?words=" + encodeURIComponent(JSON.stringify(lst));
+    return url
+}
+function start(urlParameters) {
     createWorld()
     loop(0.016)
     var stationary, constraints;
-    var lst = [
-        "", "hello", "maggie", "baby >:D", "lemme", "sing", "you a", "lullaby", ">:D jkjk", "hmmm", "this", "might", "sound", "papaya-ey", "but i", "think", "you are", "really", "sweet!",
-        "happy", "late", "valentines", "day!", "<3", "also...", "your gifs", "are more", "cute >:D", "here is", "another", "rose", "for you", "@}->-`-,---"
-    ];
+    var input = urlParameters.get("words");
+    var lst;
+    if (!input){
+        lst = [
+            "", "hello", "maggie", "baby >:D", "lemme", "sing", "you a", "lullaby", ">:D jkjk", "hmmm", "this", "might", "sound", "papaya-ey", "but i", "think", "you are", "really", "sweet!",
+            "happy", "late", "valentines", "day!", "<3", "also...", "your gifs", "are more", "cute >:D", "here is", "another", "rose", "for you", "@}->-`-,---", '\\     ▄▄▄▄▄               ▄▄▄▄     \n   ████████▄▄         ▄███████▄▄  \n  █████████████▄  ▄▄█████████████ \n █████████████████████████████████\n██████████████████████████████████\n██████████████████████████████████\n▀████████████████████████████████ \n ███████████████████████████████  \n  ▀███████████████████████████▀   \n    ▀████████████████████████     \n       ▀███████████████████▀      \n         ▀███████████████▀        \n           ████████████▀          \n             ████████▀            \n               ████▀              \n                 ▀                '
+        ]
+        var url = getUrl(lst);
+        window.history.pushState({}, "", url);
+
+    } else{
+        lst = JSON.parse(decodeURIComponent(input));
+    }
+    
     [hearts, stationary, constraints] = createHeartsAndConstraints(lst);
     world.addBody(stationary)
     for (var i = 0; i < hearts.length; i++) {
@@ -537,4 +554,5 @@ function start() {
     nextWord();
 
 }
-start();
+const urlParams = new URLSearchParams(window.location.search)
+start(urlParams);
